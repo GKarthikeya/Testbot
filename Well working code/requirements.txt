@@ -1,5 +1,0 @@
-Flask
-selenium
-tabulate
-gunicorn
-webdriver-manager
