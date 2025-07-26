@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: attendance-app
+    env: docker
+    plan: free
+    autoDeploy: true
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: GOOGLE_CHROME_BIN
+        value: /usr/bin/google-chrome
