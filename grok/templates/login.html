@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Student Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Mobile responsiveness -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
@@ -14,33 +15,41 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
+            padding: 10px;
         }
+
         .login-container {
             background: white;
-            padding: 30px 25px;
+            padding: 25px 20px;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
             width: 100%;
             max-width: 400px;
+            box-sizing: border-box;
         }
+
         .login-title {
             text-align: center;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: bold;
             color: #003366;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
+
         .input-group {
             position: relative;
             margin-bottom: 20px;
         }
+
         .input-group input {
-            width: 75%;
+            width: 100%;
             padding: 12px 40px 12px 15px;
             font-size: 16px;
             border-radius: 6px;
             border: 1px solid #ccc;
+            box-sizing: border-box;
         }
+
         .input-group .icon {
             position: absolute;
             right: 12px;
@@ -49,6 +58,7 @@
             color: #888;
             cursor: pointer;
         }
+
         .login-button {
             width: 100%;
             background-color: #007bff;
@@ -58,30 +68,58 @@
             border-radius: 6px;
             font-size: 16px;
             cursor: pointer;
+            box-sizing: border-box;
         }
+
         .login-button:hover {
             background-color: #0056b3;
         }
+
         .login-button:disabled {
             background-color: #999;
             cursor: not-allowed;
         }
+
         #countdown {
-            font-size: 20px;
+            font-size: 18px;
             color: #333;
             margin-top: 15px;
             text-align: center;
+            padding: 0 10px;
         }
+
         .status-message {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
+
         .status-message img {
             width: 24px;
             height: 24px;
             display: none;
+        }
+
+        @media (max-width: 480px) {
+            .login-title {
+                font-size: 20px;
+            }
+
+            .login-button {
+                font-size: 15px;
+                padding: 10px;
+            }
+
+            .input-group input {
+                font-size: 15px;
+                padding: 10px 38px 10px 12px;
+            }
+
+            #countdown {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
