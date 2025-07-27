@@ -140,7 +140,7 @@
                 if (seconds <= 0) {
                     clearInterval(timer);
 
-                    // Step 1: Show text only
+                    // Step 1: Show "Processing completed."
                     countdownDiv.innerHTML = `
                         <div class="status-message">
                             <span id="processing-text">Processing completed.</span>
@@ -148,27 +148,26 @@
                         </div>
                     `;
 
-                    // Step 2: Show image after 0.5 second
+                    // Step 2: Show image after 0.5 sec
                     setTimeout(() => {
                         document.getElementById("done-icon").style.display = "inline";
                     }, 500);
 
-                    // Step 3: Start redirecting animation after 3 seconds
+                    // Step 3: Start "Redirecting..." animation after 3 sec
                     setTimeout(() => {
-                        let dotCount = 3;
+                        let dotCount = 0;
                         const redirectText = "Redirecting";
-                        const dotAnimation = setInterval(() => {
+                        const redirectInterval = setInterval(() => {
                             dotCount = (dotCount + 1) % 4;
                             countdownDiv.textContent = redirectText + ".".repeat(dotCount);
                         }, 300);
 
-                        // Step 4: Submit form after 1.5 sec of animation
+                        // Step 4: Redirect to attendance page (after ~3s of animation)
                         setTimeout(() => {
-                            clearInterval(dotAnimation);
-                            document.getElementById("loginForm").submit();
-                        }, 1500);
-
-                    }, 3000);
+                            clearInterval(redirectInterval);
+                            window.location.href = "/attendance";
+                        }, 3000);
+                    }, 3000); // wait 3s before animation
                 }
             }, 1000);
         });
