@@ -62,16 +62,31 @@
         .login-button:hover {
             background-color: #0056b3;
         }
+        .login-button:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
         #countdown {
             font-size: 20px;
             color: #333;
             margin-top: 15px;
             text-align: center;
         }
+        .status-message {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .status-message img {
+            width: 24px;
+            height: 24px;
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <form method="POST" action="/attendance" class="login-container" onsubmit="startCountdown(event)">
+    <form method="POST" action="/attendance" class="login-container" id="loginForm">
         <div class="login-title">Student Login</div>
         <div class="input-group">
             <input type="text" name="username" placeholder="User Name" required>
@@ -81,12 +96,14 @@
             <input type="password" name="password" placeholder="Password" id="password" required>
             <i class="fa fa-eye icon" id="togglePassword" onclick="togglePasswordVisibility()"></i>
         </div>
-        <button type="submit" class="login-button">Login</button>
+        <button type="submit" class="login-button" id="loginBtn">Login</button>
     </form>
 
     <div id="countdown"></div>
 
     <script>
+        let countdownStarted = false;
+
         function togglePasswordVisibility() {
             const passwordField = document.getElementById("password");
             const toggleIcon = document.getElementById("togglePassword");
@@ -101,10 +118,18 @@
             }
         }
 
-        function startCountdown(event) {
-            event.preventDefault(); // Stop form submission initially
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            if (countdownStarted) {
+                event.preventDefault();
+                return;
+            }
+
+            event.preventDefault();
+            countdownStarted = true;
 
             const countdownDiv = document.getElementById("countdown");
+            const loginBtn = document.getElementById("loginBtn");
+            loginBtn.disabled = true;
 
             let seconds = 40;
             countdownDiv.textContent = `Please wait ${seconds} seconds...`;
@@ -114,14 +139,39 @@
                 countdownDiv.textContent = `Please wait ${seconds} seconds...`;
                 if (seconds <= 0) {
                     clearInterval(timer);
-                    countdownDiv.textContent = "Processing complete. Redirecting...";
-                    // Submit the form after 1 more second
+
+                    // Step 1: Show text only
+                    countdownDiv.innerHTML = `
+                        <div class="status-message">
+                            <span id="processing-text">Processing completed.</span>
+                            <img id="done-icon" src="https://cdn-icons-png.flaticon.com/128/5290/5290058.png" alt="done">
+                        </div>
+                    `;
+
+                    // Step 2: Show image after 0.5 second
                     setTimeout(() => {
-                        event.target.submit();
-                    }, 1000);
+                        document.getElementById("done-icon").style.display = "inline";
+                    }, 500);
+
+                    // Step 3: Start redirecting animation after 3 seconds
+                    setTimeout(() => {
+                        let dotCount = 3;
+                        const redirectText = "Redirecting";
+                        const dotAnimation = setInterval(() => {
+                            dotCount = (dotCount + 1) % 4;
+                            countdownDiv.textContent = redirectText + ".".repeat(dotCount);
+                        }, 300);
+
+                        // Step 4: Submit form after 1.5 sec of animation
+                        setTimeout(() => {
+                            clearInterval(dotAnimation);
+                            document.getElementById("loginForm").submit();
+                        }, 1500);
+
+                    }, 3000);
                 }
             }, 1000);
-        }
+        });
     </script>
 </body>
 </html>
