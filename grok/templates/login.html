@@ -140,7 +140,7 @@
                 if (seconds <= 0) {
                     clearInterval(timer);
 
-                    // Step 1: Show "Processing completed."
+                    // Step 1: Show text only
                     countdownDiv.innerHTML = `
                         <div class="status-message">
                             <span id="processing-text">Processing completed.</span>
@@ -148,26 +148,27 @@
                         </div>
                     `;
 
-                    // Step 2: Show image after 0.75 sec
+                    // Step 2: Show image after 1 second
                     setTimeout(() => {
                         document.getElementById("done-icon").style.display = "inline";
-                    }, 075*1000);
+                    }, 1000);
 
-                    // Step 3: Start "Redirecting..." animation after 3 sec
+                    // Step 3: Start redirecting animation after 3 seconds
                     setTimeout(() => {
                         let dotCount = 0;
                         const redirectText = "Redirecting";
-                        const redirectInterval = setInterval(() => {
+                        const dotAnimation = setInterval(() => {
                             dotCount = (dotCount + 1) % 4;
                             countdownDiv.textContent = redirectText + ".".repeat(dotCount);
                         }, 300);
 
-                        // Step 4: Redirect to attendance page (after ~3s of animation)
+                        // Step 4: Submit form after 1.5 sec of animation
                         setTimeout(() => {
-                            clearInterval(redirectInterval);
-                            window.location.href = "/attendance";
-                        }, 3000);
-                    }, 3000); // wait 3s before animation
+                            clearInterval(dotAnimation);
+                            document.getElementById("loginForm").submit();
+                        }, 1500);
+
+                    }, 3000);
                 }
             }, 1000);
         });
