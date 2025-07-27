@@ -11,7 +11,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100vh;
+            justify-content: center;
+            min-height: 100vh;
             margin: 0;
         }
         .login-container {
@@ -21,7 +22,6 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
             width: 100%;
             max-width: 400px;
-            margin-top: 50px;
         }
         .login-title {
             text-align: center;
@@ -148,10 +148,10 @@
                         </div>
                     `;
 
-                    // Step 2: Show image after 1 second
+                    // Step 2: Show image after 0.5 second
                     setTimeout(() => {
                         document.getElementById("done-icon").style.display = "inline";
-                    }, 1000);
+                    }, 500);
 
                     // Step 3: Start redirecting animation after 3 seconds
                     setTimeout(() => {
