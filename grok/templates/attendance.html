@@ -3,26 +3,75 @@
 <head>
     <title>Attendance Report</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: white; }
-        th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
-        th { background-color: #4CAF50; color: white; }
-        h2 { color: #333; }
-        .summary { font-weight: bold; font-size: 16px; }
-        .back-link { margin-top: 20px; display: block; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background: white;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        h2 {
+            color: #333;
+        }
+        .summary {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .button-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .back-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
     <h2>📊 Attendance Report</h2>
+    
     {{ table_html | safe }}
+    
     <div class="summary">
         <p>✅ Overall Attendance: Present = {{ overall.present }}, Absent = {{ overall.absent }}, Percentage = {{ overall.percentage }}%</p>
-        
+
+        {% set required = (3 * overall.absent - overall.present) %}
         {% if overall.percentage < 75 %}
             <p style="color: red;">⚠️ Warning: Your attendance is below 75%!</p>
+            {% if required > 0 %}
+                <p style="color: orange;">📅 You need to attend at least <strong>{{ required }}</strong> more classes consecutively to reach 75% attendance.</p>
+            {% else %}
+                <p>🎉 You are already eligible. Just maintain your attendance!</p>
+            {% endif %}
         {% endif %}
     </div>
-    
-    <a class="back-link" href="/">🔙 Back to Login</a>
+
+    <div class="button-container">
+        <a href="/" class="back-button">Back to Login</a>
+    </div>
 </body>
 </html>
