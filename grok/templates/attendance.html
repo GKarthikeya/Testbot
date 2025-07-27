@@ -1,90 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Attendance Report</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Mobile support -->
     <style>
         body {
             font-family: Arial, sans-serif;
             background: #f9f9f9;
             padding: 20px;
-            margin: 0;
         }
-
-        h2 {
-            color: #333;
-            text-align: center;
-        }
-
-        .table-wrapper {
-            overflow-x: auto; /* Enables horizontal scroll on mobile */
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
             background: white;
-            min-width: 500px; /* Prevents table squishing on mobile */
         }
-
         th, td {
             padding: 10px;
             border: 1px solid #ccc;
             text-align: center;
         }
-
         th {
             background-color: #4CAF50;
             color: white;
         }
-
+        h2 {
+            color: #333;
+        }
         .summary {
             font-weight: bold;
             font-size: 16px;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .button-container {
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        .back-button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 8px;
-            text-decoration: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            display: inline-block;
-        }
-
-        .back-button:hover {
-            background-color: #45a049;
-        }
-
-        @media (max-width: 600px) {
-            .back-button {
-                width: 90%;
-                font-size: 15px;
-                padding: 12px;
-            }
         }
     </style>
 </head>
 <body>
     <h2>📊 Attendance Report</h2>
-
-    <div class="table-wrapper">
-        {{ table_html | safe }}
-    </div>
-
+    
+    {{ table_html | safe }}
+    
     <div class="summary">
         <p>✅ Overall Attendance: Present = {{ overall.present }}, Absent = {{ overall.absent }}, Percentage = {{ overall.percentage }}%</p>
 
@@ -97,10 +49,6 @@
                 <p>🎉 You are already eligible. Just maintain your attendance!</p>
             {% endif %}
         {% endif %}
-    </div>
-
-    <div class="button-container">
-        <a href="/" class="back-button">Back to Login</a>
     </div>
 </body>
 </html>
