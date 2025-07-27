@@ -1,61 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Attendance Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive tag -->
     <style>
         body {
             font-family: Arial, sans-serif;
             background: #f9f9f9;
             padding: 20px;
+            margin: 0;
         }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            overflow-x: auto; /* Make table scrollable on small screens */
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
-            background: white;
+            min-width: 500px; /* Prevent shrinking too small */
         }
+
         th, td {
             padding: 10px;
             border: 1px solid #ccc;
             text-align: center;
+            font-size: 16px;
         }
+
         th {
             background-color: #4CAF50;
             color: white;
         }
-        h2 {
-            color: #333;
-        }
+
         .summary {
             font-weight: bold;
             font-size: 16px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .summary p {
+            margin: 8px 0;
         }
 
         .button-container {
             margin-top: 30px;
             text-align: center;
         }
+
         .back-button {
             background-color: #4CAF50;
             color: white;
-            padding: 10px 20px;
+            padding: 10px 24px;
             font-size: 16px;
             border: none;
             border-radius: 8px;
             text-decoration: none;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            display: inline-block;
         }
+
         .back-button:hover {
             background-color: #45a049;
+        }
+
+        @media (max-width: 600px) {
+            h2 {
+                font-size: 20px;
+            }
+
+            th, td {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            .summary {
+                font-size: 15px;
+            }
+
+            .back-button {
+                font-size: 15px;
+                padding: 10px 20px;
+            }
         }
     </style>
 </head>
 <body>
     <h2>📊 Attendance Report</h2>
-    
-    {{ table_html | safe }}
-    
+
+    <div class="table-container">
+        {{ table_html | safe }}
+    </div>
+
     <div class="summary">
         <p>✅ Overall Attendance: Present = {{ overall.present }}, Absent = {{ overall.absent }}, Percentage = {{ overall.percentage }}%</p>
 
