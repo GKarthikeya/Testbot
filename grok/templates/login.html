@@ -131,7 +131,7 @@
             const loginBtn = document.getElementById("loginBtn");
             loginBtn.disabled = true;
 
-            let seconds = 40;
+            let seconds = 5;
             countdownDiv.textContent = `Please wait ${seconds} seconds...`;
 
             const timer = setInterval(() => {
@@ -148,10 +148,10 @@
                         </div>
                     `;
 
-                    // Step 2: Show image after 1 sec
+                    // Step 2: Show image after 0.75 sec
                     setTimeout(() => {
                         document.getElementById("done-icon").style.display = "inline";
-                    }, 1000);
+                    }, 075*1000);
 
                     // Step 3: Start "Redirecting..." animation after 3 sec
                     setTimeout(() => {
