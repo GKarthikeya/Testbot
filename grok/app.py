@@ -80,7 +80,6 @@ def get_attendance_data(username, password):
         driver.find_element(By.ID, "but_submit").click()
         time.sleep(3)
 
-        # ✅ Check if login failed (still on login page)
         if driver.current_url == COLLEGE_LOGIN_URL:
             return {"error": "ERROR occurred: Please check username or password."}
 
@@ -105,7 +104,6 @@ def show_attendance():
 
     data = get_attendance_data(username, password)
 
-    # ✅ If an error occurred (e.g., wrong login)
     if "error" in data:
         return render_template("login.html", error=data["error"])
 
