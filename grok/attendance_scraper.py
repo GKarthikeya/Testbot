@@ -95,11 +95,18 @@ def login_and_get_attendance(username, password):
         driver.find_element(By.ID, "but_submit").click()
         time.sleep(3)
 
-        driver.get(ATTENDANCE_URL)
-        time.sleep(3)
-
-        rows = driver.find_elements(By.TAG_NAME, "tr")
-        return calculate_attendance_percentage(rows)
+        if driver.current_url != COLLEGE_LOGIN_URL:
+            driver.get(ATTENDANCE_URL)
+            time.sleep(3)
+            rows = driver.find_elements(By.TAG_NAME, "tr")
+            return calculate_attendance_percentage(rows)
+        else:
+            return {
+                "overall": {
+                    "success": False,
+                    "message": "ERROR occurred: Please check username or password."
+                }
+            }
 
     except Exception as e:
         return {
