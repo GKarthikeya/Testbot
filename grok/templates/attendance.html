@@ -9,6 +9,7 @@
         th { background-color: #4CAF50; color: white; }
         h2 { color: #333; }
         .summary { font-weight: bold; font-size: 16px; }
+        .back-link { margin-top: 20px; display: block; }
     </style>
 </head>
 <body>
@@ -16,6 +17,12 @@
     {{ table_html | safe }}
     <div class="summary">
         <p>✅ Overall Attendance: Present = {{ overall.present }}, Absent = {{ overall.absent }}, Percentage = {{ overall.percentage }}%</p>
+        
+        {% if overall.percentage < 75 %}
+            <p style="color: red;">⚠️ Warning: Your attendance is below 75%!</p>
+        {% endif %}
     </div>
+    
+    <a class="back-link" href="/">🔙 Back to Login</a>
 </body>
 </html>
