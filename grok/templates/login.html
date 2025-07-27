@@ -9,9 +9,10 @@
             font-family: 'Segoe UI', sans-serif;
             background: #f8f9fc;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             height: 100vh;
+            margin: 0;
         }
         .login-container {
             background: white;
@@ -20,6 +21,7 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
             width: 100%;
             max-width: 400px;
+            margin-top: 50px;
         }
         .login-title {
             text-align: center;
@@ -60,10 +62,16 @@
         .login-button:hover {
             background-color: #0056b3;
         }
+        #countdown {
+            font-size: 20px;
+            color: #333;
+            margin-top: 15px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <form method="POST" action="/attendance" class="login-container">
+    <form method="POST" action="/attendance" class="login-container" onsubmit="startCountdown(event)">
         <div class="login-title">Student Login</div>
         <div class="input-group">
             <input type="text" name="username" placeholder="User Name" required>
@@ -75,6 +83,9 @@
         </div>
         <button type="submit" class="login-button">Login</button>
     </form>
+
+    <div id="countdown"></div>
+
     <script>
         function togglePasswordVisibility() {
             const passwordField = document.getElementById("password");
@@ -88,6 +99,28 @@
                 toggleIcon.classList.remove("fa-eye-slash");
                 toggleIcon.classList.add("fa-eye");
             }
+        }
+
+        function startCountdown(event) {
+            event.preventDefault(); // Stop form submission initially
+
+            const countdownDiv = document.getElementById("countdown");
+
+            let seconds = 40;
+            countdownDiv.textContent = `Please wait ${seconds} seconds...`;
+
+            const timer = setInterval(() => {
+                seconds--;
+                countdownDiv.textContent = `Please wait ${seconds} seconds...`;
+                if (seconds <= 0) {
+                    clearInterval(timer);
+                    countdownDiv.textContent = "Processing complete. Redirecting...";
+                    // Submit the form after 1 more second
+                    setTimeout(() => {
+                        event.target.submit();
+                    }, 1000);
+                }
+            }, 1000);
         }
     </script>
 </body>
