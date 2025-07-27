@@ -63,7 +63,7 @@
         {% if overall.percentage < 75 %}
             <p style="color: red;">⚠️ Warning: Your attendance is below 75%!</p>
             {% if required > 0 %}
-                <p style="color: orange;">📅 You need to attend at least <strong>{{ required }}</strong> more classes consecutively to reach 75% attendance.</p>
+                <p style="color: black;">📅 You need to attend at least <strong>{{ required }}</strong> more classes consecutively to reach 75% attendance.</p>
             {% else %}
                 <p>🎉 You are already eligible. Just maintain your attendance!</p>
             {% endif %}
