@@ -184,7 +184,7 @@
             const loginBtn = document.getElementById("loginBtn");
             loginBtn.disabled = true;
 
-            let seconds = 5;
+            let seconds = 10;
             countdownDiv.textContent = `Please wait ${seconds} seconds...`;
 
             const timer = setInterval(() => {
@@ -211,7 +211,7 @@
                         let dotCount = 0;
                         const redirectText = "Redirecting";
                         const dotAnimation = setInterval(() => {
-                            dotCount = (dotCount + 1) % 5;
+                            dotCount = (dotCount + 1) % 1;
                             countdownDiv.textContent = redirectText + ".".repeat(dotCount);
                         }, 300);
 
