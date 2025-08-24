@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Attendance Calendar</title>
+<style>
+  .full { background-color: #4CAF50; color: white; }
+  .not_enough { background-color: #FFC107; color: black; }
+  .absent { background-color: #F44336; color: white; }
+  .empty { background-color: #E0E0E0; color: black; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { border: 1px solid #999; padding: 5px; text-align: center; }
+</style>
+</head>
+<body>
+
+<h2>Login to Load Attendance</h2>
+<form method="post">
+  Username: <input type="text" name="username" required>
+  Password: <input type="password" name="password" required>
+  <button type="submit">Load Attendance</button>
+</form>
+
+<h2>Attendance Calendar: {{ month }}/{{ year }}</h2>
+<table>
+<tr>
+  {% for day in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}
+    <th>{{ day }}</th>
+  {% endfor %}
+</tr>
+{% set day = 1 %}
+{% for week in range(6) %}
+<tr>
+  {% for weekday in range(7) %}
+    {% if week == 0 and weekday < first_weekday %}
+      <td></td>
+    {% elif day > num_days %}
+      <td></td>
+    {% else %}
+      {% set date_str = '%04d-%02d-%02d' % (year, month, day) %}
+      <td class="{{ day_marks.get(date_str, 'empty') }}">{{ day }}</td>
+      {% set day = day + 1 %}
+    {% endif %}
+  {% endfor %}
+</tr>
+{% endfor %}
+</table>
+
+</body>
+</html>
