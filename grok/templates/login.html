@@ -1,230 +1,192 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Student Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Mobile responsiveness -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+<meta charset="utf-8" />
+<title>Attendance Calendar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg: #0f1220;
+    --panel: #171a2b;
+    --muted: #8a8fa6;
+    --text: #e6e8f5;
+    --border: #2a2f48;
+    --green: #2ecc71;
+    --red: #e74c3c;
+    --blue: #4dabf7;
+    --grey: #4a4f69;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+    margin: 0; padding: 24px;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
 
-        .logo {
-            width: 180px;
-            height: auto;
-            margin-bottom: 20px;
-        }
+  /* Card */
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 18px 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.25);
+  }
 
-        .login-container {
-            background: white;
-            padding: 25px 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-        }
+  h1 { margin: 0 0 12px; font-weight: 700; font-size: 22px; }
+  .muted { color: var(--muted); }
 
-        .login-title {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #003366;
-            margin-bottom: 20px;
-        }
+  /* Form */
+  form { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  input, select, button {
+    background: #0e1020; color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px;
+    outline: none;
+  }
+  input { width: 220px; }
+  button { cursor: pointer; background: #1e2240; }
+  button:hover { filter: brightness(1.1); }
 
-        .input-group {
-            position: relative;
-            margin-bottom: 20px;
-        }
+  /* Table */
+  table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 14px; }
+  th, td {
+    border-bottom: 1px solid var(--border);
+    padding: 10px 10px; text-align: center; font-size: 14px;
+  }
+  th { background: #13162b; color: var(--muted); font-weight: 600; }
 
-        .input-group input {
-            width: 100%;
-            padding: 12px 40px 12px 15px;
-            font-size: 16px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
+  /* Calendar */
+  .cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .cal-title { font-size: 18px; font-weight: 700; }
+  .calendar {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .weekdays, .week {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+  }
+  .weekdays span {
+    text-align:center; color: var(--muted); font-weight: 700; letter-spacing: .08em;
+  }
+  .day {
+    position: relative; height: 58px; display: flex; align-items: center; justify-content: center;
+    border-radius: 12px; background: #12142a; border: 1px solid rgba(255,255,255,.04);
+  }
+  .day .num {
+    width: 36px; height: 36px; line-height: 36px;
+    border-radius: 50%; display: inline-flex; align-items:center; justify-content:center;
+    font-weight: 700;
+  }
+  .day.empty .num { color: var(--grey); }
+  .day.absent::after {
+    content: "•"; position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+    font-size: 20px; color: var(--red);
+  }
+  .day.all_present .num {
+    background: var(--green); color: #0b2917;
+  }
+  .day.today .num {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+  .legend { display:flex; gap:14px; align-items:center; justify-content:center; margin-top:10px; color: var(--muted); }
+  .legend .dot { width: 10px; height: 10px; border-radius: 50%; display:inline-block; }
+  .legend .lg { display:flex; align-items:center; gap:6px; }
 
-        .input-group .icon {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #888;
-            cursor: pointer;
-        }
-
-        .login-button {
-            width: 100%;
-            background-color: #007bff;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .login-button:hover {
-            background-color: #0056b3;
-        }
-
-        .login-button:disabled {
-            background-color: #999;
-            cursor: not-allowed;
-        }
-
-        #countdown {
-            font-size: 18px;
-            color: #333;
-            margin-top: 15px;
-            text-align: center;
-            padding: 0 10px;
-        }
-
-        .status-message {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .status-message img {
-            width: 24px;
-            height: 24px;
-            display: none;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 480px) {
-            .logo {
-                width: 120px;
-            }
-
-            .login-title {
-                font-size: 20px;
-            }
-
-            .login-button {
-                font-size: 15px;
-                padding: 10px;
-            }
-
-            .input-group input {
-                font-size: 15px;
-                padding: 10px 38px 10px 12px;
-            }
-
-            #countdown {
-                font-size: 16px;
-            }
-        }
-    </style>
+  .bad { color:#ff7675; }
+  .good { color:#2ecc71; }
+</style>
 </head>
 <body>
-    <!-- Logo -->
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7P-4E7SRi5HJ6qm3ziLELc_AlZ8VT8O_CHA&s" alt="Logo" class="logo">
+<div class="wrap">
 
-    <!-- Login Form -->
-    <form method="POST" action="/attendance" class="login-container" id="loginForm">
-        <div class="login-title">Student Login</div>
-        <div class="input-group">
-            <input type="text" name="username" placeholder="User Name" required>
-            <i class="fa fa-user icon"></i>
-        </div>
-        <div class="input-group">
-            <input type="password" name="password" placeholder="Password" id="password" required>
-            <i class="fa fa-eye icon" id="togglePassword" onclick="togglePasswordVisibility()"></i>
-        </div>
-        <button type="submit" class="login-button" id="loginBtn">Login</button>
+  <div class="card">
+    <h1>IARE Attendance — Calendar Streak</h1>
+    <div class="muted" style="margin-bottom:10px;">Login and render a LeetCode-style calendar. Green = all classes present; Red dot = any absence; Grey = no classes.</div>
+
+    <form method="POST">
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <label class="muted">Month</label>
+      <select name="month" title="Month">
+        {% for m in range(1, 13) %}
+          <option value="{{ m }}" {% if m==month %}selected{% endif %}>{{ month_names[m] }}</option>
+        {% endfor %}
+      </select>
+      <label class="muted">Year</label>
+      <input type="number" name="year" value="{{ year }}" style="width:100px" />
+      <button type="submit">Fetch</button>
     </form>
 
-    <div id="countdown"></div>
+    {% if message %}<p class="bad" style="margin-top:10px">{{ message }}</p>{% endif %}
+  </div>
 
-    <script>
-        let countdownStarted = false;
+  {% if data %}
+  <!-- SUBJECT TABLE -->
+  <div class="card">
+    <div class="cal-header">
+      <div class="cal-title">Subjects Summary</div>
+      <div class="muted">Repeated periods count as separate.</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>S.No</th><th>Course Code</th><th>Course Name</th><th>Present</th><th>Absent</th><th>Percentage</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for r in data.subjects_table %}
+        <tr>
+          <td>{{ r[0] }}</td><td>{{ r[1] }}</td><td>{{ r[2] }}</td><td>{{ r[3] }}</td><td>{{ r[4] }}</td><td>{{ r[5] }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-        function togglePasswordVisibility() {
-            const passwordField = document.getElementById("password");
-            const toggleIcon = document.getElementById("togglePassword");
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                toggleIcon.classList.remove("fa-eye");
-                toggleIcon.classList.add("fa-eye-slash");
-            } else {
-                passwordField.type = "password";
-                toggleIcon.classList.remove("fa-eye-slash");
-                toggleIcon.classList.add("fa-eye");
-            }
-        }
+  <!-- CALENDAR -->
+  <div class="card">
+    <div class="cal-header">
+      <div class="cal-title">{{ month_name }} {{ year }}</div>
+      <div class="muted">
+        Streak: <span class="good">{{ data.streak.current }}</span> current •
+        <span class="good">{{ data.streak.longest }}</span> longest
+      </div>
+    </div>
 
-        document.getElementById("loginForm").addEventListener("submit", function(event) {
-            if (countdownStarted) {
-                event.preventDefault();
-                return;
-            }
+    <div class="calendar">
+      <div class="weekdays">
+        <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+      </div>
 
-            event.preventDefault();
-            countdownStarted = true;
+      {% for week in data.matrix %}
+      <div class="week">
+        {% for d in week %}
+        {% set status =
+              'empty' if d.month != month else
+              ('all_present' if data.calendar_map.get(d) and data.calendar_map[d] | select('equalto','PRESENT') | list | length == data.calendar_map[d] | length
+               else ('absent' if data.calendar_map.get(d) else 'empty')) %}
+        <div class="day {{ status }} {% if d == today %}today{% endif %}">
+          <span class="num">{{ d.day }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
 
-            const countdownDiv = document.getElementById("countdown");
-            const loginBtn = document.getElementById("loginBtn");
-            loginBtn.disabled = true;
+      <div class="legend">
+        <span class="lg"><span class="dot" style="background:var(--green)"></span>All Present</span>
+        <span class="lg"><span class="dot" style="background:var(--red)"></span>Any Absent</span>
+        <span class="lg"><span class="dot" style="border:2px solid var(--blue)"></span>Today</span>
+      </div>
+    </div>
+  </div>
+  {% endif %}
 
-            let seconds = 10;
-            countdownDiv.textContent = `Please wait ${seconds} seconds...`;
-
-            const timer = setInterval(() => {
-                seconds--;
-                countdownDiv.textContent = `Please wait ${seconds} seconds...`;
-                if (seconds <= 0) {
-                    clearInterval(timer);
-
-                    // Step 1: Show text only
-                    countdownDiv.innerHTML = `
-                        <div class="status-message">
-                            <span id="processing-text">Processing completed.</span>
-                            <img id="done-icon" src="https://cdn-icons-png.flaticon.com/128/5290/5290058.png" alt="done">
-                        </div>
-                    `;
-
-                    // Step 2: Show image after 0.5 second
-                    setTimeout(() => {
-                        document.getElementById("done-icon").style.display = "inline";
-                    }, 500);
-
-                    // Step 3: Start redirecting animation after 3 seconds
-                    setTimeout(() => {
-                        let dotCount = 0;
-                        const redirectText = "Redirecting";
-                        const dotAnimation = setInterval(() => {
-                            dotCount = (dotCount + 1) % 1;
-                            countdownDiv.textContent = redirectText + ".".repeat(dotCount);
-                        }, 300);
-
-                        // Step 4: Submit form after 1.5 sec of animation
-                        setTimeout(() => {
-                            clearInterval(dotAnimation);
-                            document.getElementById("loginForm").submit();
-                        }, 1500);
-
-                    }, 3000);
-                }
-            }, 1000);
-        });
-    </script>
+</div>
 </body>
 </html>
