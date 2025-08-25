@@ -1,36 +1,20 @@
+from flask import Flask, render_template, request
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from tabulate import tabulate
 import time
 import re
 
+app = Flask(__name__)
+
 COLLEGE_LOGIN_URL = "https://samvidha.iare.ac.in/"
 ATTENDANCE_URL = "https://samvidha.iare.ac.in/home?action=course_content"
 
-def create_driver():
-    chrome_options = Options()
-    chrome_options.add_argument("--headless=new")   # run in headless mode (no UI)
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--window-size=1920,1080")
-
-    # 👇 Point Selenium to your installed Chrome
-    chrome_options.binary_location = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
-
-    return webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),
-        options=chrome_options
-    )
-
 def calculate_attendance_percentage(rows):
-    result = {
-        "subjects": {},
-        "overall": {"present": 0, "absent": 0, "percentage": 0.0, "success": False}
-    }
+    result = {"subjects": {}, "overall": {"present": 0, "absent": 0, "percentage": 0.0, "success": False}}
 
     current_course = None
     total_present = 0
@@ -41,21 +25,15 @@ def calculate_attendance_percentage(rows):
         if not text or text.startswith("S.NO") or "TOPICS COVERED" in text:
             continue
 
-        # Detect new course header
         course_match = re.match(r"^(A[A-Z]+\d+)\s*[-:\s]+\s*(.+)$", text)
         if course_match:
             current_course = course_match.group(1)
             course_name = course_match.group(2).strip()
             result["subjects"][current_course] = {
-                "name": course_name,
-                "present": 0,
-                "absent": 0,
-                "percentage": 0.0,
-                "status": ""
+                "name": course_name, "present": 0, "absent": 0, "percentage": 0.0
             }
             continue
 
-        # Count present/absent in each row
         if current_course:
             present_count = text.count("PRESENT")
             absent_count = text.count("ABSENT")
@@ -64,19 +42,11 @@ def calculate_attendance_percentage(rows):
             total_present += present_count
             total_absent += absent_count
 
-    # Calculate subject percentages
     for sub in result["subjects"].values():
         total = sub["present"] + sub["absent"]
         if total > 0:
             sub["percentage"] = round((sub["present"] / total) * 100, 2)
-            if sub["percentage"] < 65:
-                sub["status"] = "Shortage"
-            elif sub["percentage"] < 75:
-                sub["status"] = "Condonation"
-            else:
-                sub["status"] = ""
 
-    # Calculate overall percentage
     overall_total = total_present + total_absent
     if overall_total > 0:
         result["overall"] = {
@@ -88,53 +58,71 @@ def calculate_attendance_percentage(rows):
 
     return result
 
-def login_and_get_attendance(username, password):
-    driver = create_driver()
+def get_attendance_data(username, password):
+    options = Options()
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--window-size=1920,1080")
+
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()),
+        options=options
+    )
+
     try:
         driver.get(COLLEGE_LOGIN_URL)
         time.sleep(2)
-
         driver.find_element(By.ID, "txt_uname").send_keys(username)
         driver.find_element(By.ID, "txt_pwd").send_keys(password)
         driver.find_element(By.ID, "but_submit").click()
         time.sleep(3)
 
-        driver.get(ATTENDANCE_URL)
-        time.sleep(3)
-
-        rows = driver.find_elements(By.TAG_NAME, "tr")
-        return calculate_attendance_percentage(rows)
+        if driver.current_url != COLLEGE_LOGIN_URL:
+            driver.get(ATTENDANCE_URL)
+            time.sleep(3)
+            rows = driver.find_elements(By.TAG_NAME, "tr")
+            return calculate_attendance_percentage(rows)
+        else:
+            return {"error": "ERROR occurred: Please check username or password."}
 
     except Exception as e:
-        return {
-            "overall": {
-                "success": False,
-                "message": f"Error: {str(e)}"
-            }
-        }
+        return {"error": "ERROR occurred while fetching attendance."}
     finally:
         driver.quit()
 
-# ---------- Example usage ----------
+@app.route("/", methods=["GET"])
+def login_page():
+    return render_template("login.html")
+
+@app.route("/attendance", methods=["POST"])
+def show_attendance():
+    username = request.form["username"]
+    password = request.form["password"]
+
+    data = get_attendance_data(username, password)
+
+    if "error" in data:
+        return render_template("login.html", error=data["error"])
+
+    subjects = data["subjects"]
+    table_data = []
+    for i, (code, sub) in enumerate(subjects.items(), start=1):
+        table_data.append([i, code, sub["name"], sub["present"], sub["absent"], f"{sub['percentage']}%"])
+
+    table_html = tabulate(
+        table_data,
+        headers=["S.No", "Course Code", "Course Name", "Present", "Absent", "Percentage"],
+        tablefmt="html"
+    )
+
+    return render_template("attendance.html", table_html=table_html, overall=data["overall"])
+
+@app.route("/ping", methods=["GET"])
+def ping():
+    return "pong", 200
+
 if __name__ == "__main__":
-    username = "your_roll_number"
-    password = "your_password"
-
-    result = login_and_get_attendance(username, password)
-
-    if result["overall"]["success"]:
-        print("\nAttendance Report:")
-        table = []
-        for code, sub in result["subjects"].items():
-            table.append([
-                code,
-                sub["name"],
-                sub["present"],
-                sub["absent"],
-                sub["percentage"],
-                sub["status"]
-            ])
-        print(tabulate(table, headers=["Code", "Subject", "Present", "Absent", "Percentage", "Status"]))
-        print("\nOverall:", result["overall"])
-    else:
-        print("Error:", result["overall"]["message"])
+    app.run(debug=True)
