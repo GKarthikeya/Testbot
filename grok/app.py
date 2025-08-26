@@ -90,7 +90,7 @@ def get_attendance_data(username, password):
 
 @app.route("/", methods=["GET"])
 def login_page():
-    return render_template("login.html")
+    return render_templates("login.html")
 
 @app.route("/attendance", methods=["POST"])
 def show_attendance():
@@ -110,7 +110,7 @@ def show_attendance():
         tablefmt="html"
     )
 
-    return render_template("attendance.html", table_html=table_html, overall=data["overall"])
+    return render_templates("attendance.html", table_html=table_html, overall=data["overall"])
 
 @app.route("/ping", methods=["GET"])
 def ping():
