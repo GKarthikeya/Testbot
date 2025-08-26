@@ -26,13 +26,7 @@ def create_driver():
 def calculate_attendance_percentage(rows):
     result = {
         "subjects": {},
-        "overall": {
-            "present": 0,
-            "absent": 0,
-            "percentage": 0.0,
-            "success": False,
-            "message": ""
-        }
+        "overall": {"present": 0, "absent": 0, "percentage": 0.0, "success": False}
     }
 
     current_course = None
@@ -52,7 +46,8 @@ def calculate_attendance_percentage(rows):
                 "name": course_name,
                 "present": 0,
                 "absent": 0,
-                "percentage": 0.0
+                "percentage": 0.0,
+                "status": ""
             }
             continue
 
@@ -68,21 +63,25 @@ def calculate_attendance_percentage(rows):
         total = sub["present"] + sub["absent"]
         if total > 0:
             sub["percentage"] = round((sub["present"] / total) * 100, 2)
+            # Assign status
+            if sub["percentage"] < 65:
+                sub["status"] = "Shortage"
+            elif sub["percentage"] < 75:
+                sub["status"] = "Condonation"
+            else:
+                sub["status"] = ""
 
     overall_total = total_present + total_absent
     if overall_total > 0:
-        overall_percentage = round((total_present / overall_total) * 100, 2)
         result["overall"] = {
             "present": total_present,
             "absent": total_absent,
-            "percentage": overall_percentage,
-            "success": True,
-            "message": f"Overall Attendance: Present = {total_present}, Absent = {total_absent}, Percentage = {overall_percentage}%"
+            "percentage": round((total_present / overall_total) * 100, 2),
+            "success": True
         }
-    else:
-        result["overall"]["message"] = "No attendance data found."
 
     return result
+
 
 def login_and_get_attendance(username, password):
     driver = create_driver()
@@ -95,18 +94,11 @@ def login_and_get_attendance(username, password):
         driver.find_element(By.ID, "but_submit").click()
         time.sleep(3)
 
-        if driver.current_url != COLLEGE_LOGIN_URL:
-            driver.get(ATTENDANCE_URL)
-            time.sleep(3)
-            rows = driver.find_elements(By.TAG_NAME, "tr")
-            return calculate_attendance_percentage(rows)
-        else:
-            return {
-                "overall": {
-                    "success": False,
-                    "message": "ERROR occurred: Please check username or password."
-                }
-            }
+        driver.get(ATTENDANCE_URL)
+        time.sleep(3)
+
+        rows = driver.find_elements(By.TAG_NAME, "tr")
+        return calculate_attendance_percentage(rows)
 
     except Exception as e:
         return {
