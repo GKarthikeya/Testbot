@@ -60,7 +60,7 @@ def calculate_attendance_percentage(rows):
 
 def get_attendance_data(username, password):
     options = Options()
-    options.add_argument("--headless")  # No GUI
+    options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
@@ -80,17 +80,22 @@ def get_attendance_data(username, password):
         driver.find_element(By.ID, "but_submit").click()
         time.sleep(3)
 
-        driver.get(ATTENDANCE_URL)
-        time.sleep(3)
+        if driver.current_url != COLLEGE_LOGIN_URL:
+            driver.get(ATTENDANCE_URL)
+            time.sleep(3)
+            rows = driver.find_elements(By.TAG_NAME, "tr")
+            return calculate_attendance_percentage(rows)
+        else:
+            return {"error": "ERROR occurred: Please check username or password."}
 
-        rows = driver.find_elements(By.TAG_NAME, "tr")
-        return calculate_attendance_percentage(rows)
+    except Exception as e:
+        return {"error": "ERROR occurred while fetching attendance."}
     finally:
         driver.quit()
 
 @app.route("/", methods=["GET"])
 def login_page():
-    return render_templates("login.html")
+    return render_template("login.html")
 
 @app.route("/attendance", methods=["POST"])
 def show_attendance():
@@ -98,8 +103,11 @@ def show_attendance():
     password = request.form["password"]
 
     data = get_attendance_data(username, password)
-    subjects = data["subjects"]
 
+    if "error" in data:
+        return render_templates("login.html", error=data["error"])
+
+    subjects = data["subjects"]
     table_data = []
     for i, (code, sub) in enumerate(subjects.items(), start=1):
         table_data.append([i, code, sub["name"], sub["present"], sub["absent"], f"{sub['percentage']}%"])
