@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from scraper import login_and_get_attendance
+from attendance_scraper import login_and_get_attendance
+
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # needed for session handling
