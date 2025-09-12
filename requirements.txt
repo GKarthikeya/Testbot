@@ -4,3 +4,4 @@ tabulate
 gunicorn
 Pillow
 webdriver-manager
+reportlab
