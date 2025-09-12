@@ -2,4 +2,5 @@ Flask
 selenium
 tabulate
 gunicorn
+Pillow
 webdriver-manager
