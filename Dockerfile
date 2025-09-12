@@ -33,5 +33,5 @@ COPY ./grok /app/grok
 # Expose port (Render uses $PORT automatically)
 EXPOSE 10000
 
-# Start the Flask app with Gunicorn
-CMD ["gunicorn", "grok.app:app", "--bind", "0.0.0.0:$PORT", "--workers", "1", "--timeout", "120"]
+# Start the Flask app with Gunicorn (use shell form so $PORT expands)
+CMD exec gunicorn grok.app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
